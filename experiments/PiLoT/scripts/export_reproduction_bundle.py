@@ -24,7 +24,6 @@ EXPERIMENT = Path("experiments/PiLoT")
 REQUIRED = (
     "PiLoT_record.md",
     "LICENSE",
-    "docs/github_publish.md",
     "docs/coordinate_systems.md",
     "docs/custom_data.md",
     "scripts/annotate_target_points.py",
@@ -254,8 +253,8 @@ def build_plan(root: Path, commit: str) -> List[ExportFile]:
         media_section = """## 精选可视化结果
 
 每组保留前三帧渲染图（帧号 0、1、2）和一次完整可视化视频，方便浏览复现效果。
-图片为模型渲染结果，不是另行上传的完整查询图像集；视频为便于浏览器播放的
-H.264 发布副本，保留原分辨率和 10 FPS，原 `outputs/` 中的运行结果未更改。
+图片为模型渲染结果，不是完整查询图像集；视频采用 H.264 编码，保留原分辨率和
+10 FPS。
 视频可点击链接下载后播放，GitHub 文档页面不一定直接内嵌播放。
 
 | 场景 / 设置 | 第 0 帧 | 第 1 帧 | 第 2 帧 | 可视化视频 |
@@ -274,12 +273,11 @@ H.264 发布副本，保留原分辨率和 10 FPS，原 `outputs/` 中的运行�
 | --- | --- | --- |
 | PiLoT | Feicuiwan、SMBU 公开 Demo 与少量帧的目标地理定位功能展示 | [实验入口](experiments/PiLoT/README.md) |
 
-后续可以在 `experiments/OtherPaper/` 增加其他论文的复现记录，并更新上表。
-每个实验应包含论文与官方代码链接、适用版本、操作步骤、结果和局限说明。
+各论文的复现资料位于 `experiments/` 下的对应目录，包含来源、环境配置、
+实验步骤、结果和局限说明。
 
-本仓库保存文档、辅助脚本、配置、少量文本结果及可选的精选渲染图和视频；数据、模型权重、
-编译产物及完整运行输出按各实验指南单独获取。发布前请阅读
-[GitHub 上传指南](experiments/PiLoT/docs/github_publish.md)。
+本仓库保存文档、辅助脚本、配置、少量文本结果及精选渲染图和视频；数据、模型权重、
+编译产物及完整运行输出按各实验指南单独获取。
 """))
     files.append(text_file(str(EXPERIMENT / "README.md"), """# PiLoT 公开 Demo 复现
 
@@ -288,7 +286,6 @@ H.264 发布副本，保留原分辨率和 10 FPS，原 `outputs/` 中的运行�
 - 论文：[PiLoT: Neural Pixel-to-3D Registration for UAV-based Ego and Target Geo-localization](https://arxiv.org/abs/2603.20778)
 - 官方代码：[nudt-sawlab/PiLoT](https://github.com/nudt-sawlab/PiLoT)
 - [完整复现指南及结果](PiLoT_record.md)
-- [发布说明](docs/github_publish.md)
 
 已完成 Feicuiwan 和 SMBU 两个官方公开 Demo 的自定位推理、误差评估及
 可视化，并完成 Feicuiwan 少量人工点选帧的目标坐标投影演示。
@@ -306,7 +303,7 @@ git clone https://github.com/nudt-sawlab/PiLoT.git ~/course/PiLoT
 cd ~/course/PiLoT
 git checkout COMMIT_PLACEHOLDER
 
-# 修改为你克隆的复现合集的实际绝对路径。
+# 替换为本资料目录的实际绝对路径。
 bundle_dir=/absolute/path/paper-reproductions/experiments/PiLoT
 cp -a "$bundle_dir/scripts/." scripts/
 cp -a "$bundle_dir/configs/." configs/
@@ -316,7 +313,7 @@ cp "$bundle_dir/PiLoT_record.md" PiLoT_record.md
 
 复制后，按 `PiLoT_record.md` 中的环境、数据和实验步骤继续。
 本次记录的上游提交为 `COMMIT_PLACEHOLDER`；辅助文件包含本次复现的本地修复。
-CUDA 源码恢复应在这个保留了官方 Git 历史的源码目录执行，不能在轻量合集执行。
+CUDA 源码恢复应在保留了官方 Git 历史的源码目录执行，而不是本资料目录。
 CityGaussian 需要按指南单独克隆并应用 Python 3.8 兼容修复。
 
 若存在 `examples/target_points_3dgs_test.txt`，可使用它复核相同点选输入：
@@ -329,15 +326,14 @@ python scripts/localize_annotated_targets.py \\
 
 上面的命令要求已完成对应的可视化运行，并保留同一次运行的估计位姿和渲染深度。
 可选的 `examples/target_demo.csv` 为本次人工点选目标的预测坐标，不是真值。
-数据、权重和完整输出不随本仓库分发。可选的 `docs/media/` 只包含白名单中的
-精选结果，不要解除整个 `data_demo/` 或 `outputs/` 的忽略规则。
+数据、权重和完整输出不随本仓库分发，`docs/media/` 中提供精选图片和可视化视频。
 
 MEDIA_SECTION_PLACEHOLDER
 ## 归属与许可
 
 PiLoT 方法及原始实现属于论文作者。本目录保留上游的 [MIT LICENSE](LICENSE)
-和版权声明；这份许可证不表示本合集作者是 PiLoT 原作者，也不替代数据集、
-预训练模型或其他第三方组件各自的使用条款。论文引用信息见完整指南。
+和版权声明。数据集、预训练模型及其他第三方组件遵循各自的使用条款。
+论文引用信息见完整指南。
 """.replace("COMMIT_PLACEHOLDER", commit).replace("MEDIA_SECTION_PLACEHOLDER\n", media_section)))
 
     files.sort(key=lambda item: item.path.as_posix())

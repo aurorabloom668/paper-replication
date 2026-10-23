@@ -6,11 +6,10 @@
 ![CUDA Toolkit 12.4](https://img.shields.io/badge/CUDA%20Toolkit-12.4-76B900?style=flat&logo=nvidia&logoColor=white)
 ![NVIDIA RTX 3050 6 GB](https://img.shields.io/badge/GPU-RTX%203050%206%20GB-76B900?style=flat&logo=nvidia&logoColor=white)
 
-徽章展示本次验证环境，不代表最低要求或唯一兼容配置。
 
 本文是对 Cheng 等人的论文 **PiLoT: Neural Pixel-to-3D Registration for UAV-based Ego and Target Geo-localization（CVPR 2026）**及其公开代码的第三方实验复现资料，供学习与复查使用。PiLoT 方法、原始代码、数据集与预训练模型来自原作者；本资料的工作包括环境排错、公开 Demo 验证、运行结果整理，以及少帧目标像素标注和地图投影工具，不属于原创定位方法，也不是作者官方教程。
 
-- [原论文](https://arxiv.org/abs/2603.20778) · [作者项目主页](https://nudt-sawlab.github.io/PiLoT/) · [官方代码](https://github.com/nudt-sawlab/PiLoT)
+- [原论文](https://cvpr.thecvf.com/virtual/2026/poster/37000) · [作者项目主页](https://nudt-sawlab.github.io/PiLoT/) · [官方代码](https://github.com/nudt-sawlab/PiLoT)
 - [公开 Demo 数据](https://huggingface.co/datasets/choyaa/PiLoT-demo)；代码许可与原作者版权声明见 [LICENSE](LICENSE)。数据、模型和第三方依赖遵循各自的使用条款。
 - 配套脚本、配置和本文应一起获取；只复制 Markdown 不能获得本文新增的标注、目标投影及兼容工具。
 
@@ -26,6 +25,8 @@
 
 本文随附两场景的精选可视化结果：Feicuiwan 的 512×288 基准版和 1024×576 展示版、SMBU 的 512×288 版，每组包含第 0–2 帧地图渲染图及完整可视化视频。它们位于 `docs/media/`，不是完整数据集或全部运行缓存；图像和场景模型来源见上方官方链接。
 
+展示图像保留原始 PNG，视频采用便于浏览器播放的 H.264 格式，保留原分辨率、10 FPS 和帧数。视频编码转换只改变展示副本，不重新运行定位，也不改变下文的实验指标。
+
 ## 使用前准备与源码来源
 
 需要 Linux、可工作的 NVIDIA 驱动、Conda，以及与 PyTorch 配套的 CUDA Toolkit 和 C++ 编译器。本文验证的是 RTX 3050 6 GB + CUDA 12.4 + CPython 3.8.20；其他显卡需要调整 CUDA 编译架构，示例中的 `8.6` 专用于本机显卡。
@@ -40,7 +41,7 @@ cd PiLoT
 git checkout --detach a27028fd22be1de5d6f13c8a1b35ea63dbbfb86a
 ```
 
-如果本文来自个人的多论文复现合集，其中 `experiments/PiLoT/` 是轻量资料包，而不是完整 PiLoT 源码。在上述新克隆的源码根目录，把资料包的辅助脚本和配置复制进来（先替换下方路径）：
+本目录提供复现指南、辅助脚本、配置及精选结果，不包含完整 PiLoT 源码。请先完成上面的官方源码克隆，再在新克隆的源码根目录复制本目录的辅助文件（先将下方路径替换为本目录的实际位置）：
 
 ```bash
 PILOT_REPRO_DIR=/absolute/path/to/paper-reproductions/experiments/PiLoT
@@ -50,7 +51,7 @@ cp -a "$PILOT_REPRO_DIR/docs/." ./docs/
 cp "$PILOT_REPRO_DIR/PiLoT_record.md" ./PiLoT_record.md
 ```
 
-下文的 `~/course/PiLoT` 仅为示例工作目录；源码放在其他位置时替换为自己的路径。已经完成复现的读者可保留现有工作目录，按需阅读后续章节。个人 GitHub 合集的组织与上传方法见[发布指南](docs/github_publish.md)。
+下文的命令均在官方源码工作目录执行，`~/course/PiLoT` 仅为示例路径；源码放在其他位置时替换为自己的路径。已经完成复现的读者可保留现有工作目录，按需阅读后续章节。
 
 ## 一、环境配置
 
@@ -134,7 +135,7 @@ nvidia-smi
 
 ### 1.4 编译 PiLoT 的 CUDA 扩展
 
-上述 PiLoT 基线没有把 `DirectAbsoluteCost_cuda.cu` 放在工作树中，但构建脚本仍然需要它。以下步骤应在保留官方 Git 历史的源码工作目录执行；个人复现资料包不会再分发本地恢复的 CUDA 源文件或平台相关 `.so`：
+上述 PiLoT 基线没有把 `DirectAbsoluteCost_cuda.cu` 放在工作树中，但构建脚本仍然需要它。以下步骤应在保留官方 Git 历史的源码工作目录执行，从上游历史版本恢复源文件并在本机编译：
 
 ```bash
 cd ~/course/PiLoT
@@ -752,7 +753,7 @@ Visualization video saved (693 frames)
 
 #### 精选输出：前三帧与可视化视频
 
-发布材料取自第 4.9 节单独保留的 `outputs/smbu_seq2_viz/`，对应其“有可视化”一列的运行结果。下图是第 0–2 帧估计位姿对应的地图渲染参考图；黑色天空是模型未覆盖区域的渲染背景，原因见第 4.8 节。
+展示结果取自第 4.9 节单独保留的 `outputs/smbu_seq2_viz/`，对应其“有可视化”一列的运行结果。下图是第 0–2 帧估计位姿对应的地图渲染参考图；黑色天空是模型未覆盖区域的渲染背景，原因见第 4.8 节。
 
 | 第 0 帧 | 第 1 帧 | 第 2 帧 |
 |---|---|---|
@@ -831,20 +832,7 @@ done
 
 Feicuiwan 的平移误差以米计，SMBU 的平移误差以归一化模型单位计，缺少归一化尺度到米的标定，因此两者的平移数值不能直接比较。角度指标都以度计，可作结果描述；但场景、数据序列和地图后端不同，不能据此判断某一实验场景下本实验方法普遍更优。
 
-## 附：公开发布与论文引用
-
-这份指南可以放入个人多论文复现仓库的 `experiments/PiLoT/`，与配套辅助脚本、配置和少量文本结果一起发布。通过 `python scripts/export_reproduction_bundle.py --check` 检查白名单，再用 `python scripts/export_reproduction_bundle.py` 生成独立的轻量目录；不会复制数据、模型、完整输出、编译产物或上游 Git 历史，也不会自动提交或上传。目录结构、ignore 的适用范围及 GitHub 上传命令见[发布指南](docs/github_publish.md)。
-
-本次额外发布的精选媒体是每组 3 张 PNG 和 1 个完整可视化视频。PNG 保持原样；视频通过 FFmpeg 转为 H.264、`yuv420p` 并启用 `faststart`，便于浏览器播放，保留原分辨率、10 FPS 和帧数。编码转换只制作展示副本，不重新运行定位，也不更新上述实验指标；原 `outputs/` 保持不变。
-
-发布包已经包含上述精选媒体，无需重建。若需要从自己的运行结果重新制作展示副本，可在安装了 FFmpeg（含 `libx264` 和 `ffprobe`）的源码环境执行：
-
-```bash
-python scripts/prepare_visual_media.py --check
-python scripts/prepare_visual_media.py
-```
-
-脚本默认准备三组；若只运行了 512 基准和 SMBU，可用 `--cases feicuiwan_512 smbu_seq2`。目标目录已存在时不会覆盖，`--check` 不写文件。原始数据和完整输出仍被 ignore；只有这三条精选视频路径被明确放行，其他视频不会自动上传。文档使用图片预览和相对视频链接，不依赖尚不存在的 GitHub 附件地址，也不保证 README 自动内嵌播放器。公开发布时仍需遵守原数据和模型的使用条款。
+## 附：论文引用与许可
 
 引用原方法时，应引用 PiLoT 论文，而不是将本文的复现过程作为该方法的原创来源。上游提供的引用信息如下：
 

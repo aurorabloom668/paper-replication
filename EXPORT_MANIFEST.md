@@ -10,15 +10,14 @@ Optional curated media are limited to three render samples and one video per all
 | Exported relative path | Bytes |
 | --- | ---: |
 | `.gitignore` | 1123 |
-| `README.md` | 926 |
+| `README.md` | 767 |
 | `experiments/PiLoT/LICENSE` | 1120 |
-| `experiments/PiLoT/PiLoT_record.md` | 47166 |
-| `experiments/PiLoT/README.md` | 4087 |
+| `experiments/PiLoT/PiLoT_record.md` | 45632 |
+| `experiments/PiLoT/README.md` | 3801 |
 | `experiments/PiLoT/configs/demos/feicuiwan.yaml` | 2427 |
 | `experiments/PiLoT/configs/demos/smbu_seq2.yaml` | 2706 |
 | `experiments/PiLoT/docs/coordinate_systems.md` | 1331 |
 | `experiments/PiLoT/docs/custom_data.md` | 3318 |
-| `experiments/PiLoT/docs/github_publish.md` | 12893 |
 | `experiments/PiLoT/docs/media/feicuiwan_1024/0_0.png` | 856625 |
 | `experiments/PiLoT/docs/media/feicuiwan_1024/1_0.png` | 857035 |
 | `experiments/PiLoT/docs/media/feicuiwan_1024/2_0.png` | 858013 |
@@ -36,12 +35,12 @@ Optional curated media are limited to three render samples and one video per all
 | `experiments/PiLoT/scripts/_common.sh` | 1035 |
 | `experiments/PiLoT/scripts/annotate_target_points.py` | 11066 |
 | `experiments/PiLoT/scripts/download_data_demo.sh` | 4593 |
-| `experiments/PiLoT/scripts/export_reproduction_bundle.py` | 16373 |
+| `experiments/PiLoT/scripts/export_reproduction_bundle.py` | 15898 |
 | `experiments/PiLoT/scripts/localize_annotated_targets.py` | 11953 |
 | `experiments/PiLoT/scripts/prepare_citygaussian_py38.py` | 3346 |
 | `experiments/PiLoT/scripts/prepare_visual_media.py` | 6682 |
 | `experiments/PiLoT/scripts/verify_pilot_2frames.py` | 5888 |
 | `experiments/PiLoT/scripts/verify_pilot_nframes.py` | 8115 |
 
-Payload: 33 files, 34518927 bytes.
+Payload: 32 files, 34503580 bytes.
 `EXPORT_MANIFEST.md` is generated metadata and is excluded from the payload total.
